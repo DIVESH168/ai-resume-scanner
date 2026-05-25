@@ -22,15 +22,20 @@ public class AIScreener {
                 "MISSING SKILLS: (comma separated) " +
                 "RECOMMENDATION: (one line summary)";
 
-            String requestBody =
-                "{" +
-                "\"model\": \"llama-3.3-70b-versatile\"," +
-                "\"messages\": [{" +
-                "\"role\": \"user\"," +
-                "\"content\": \"" + prompt + "\"" +
-                "}]" +
-                "}";
+            String cleanPrompt = prompt
+    .replace("\r", " ")
+    .replace("\n", " ")
+    .replace("\"", "'")
+    .replace("\\", " ");
 
+String requestBody =
+    "{" +
+    "\"model\": \"llama-3.3-70b-versatile\"," +
+    "\"messages\": [{" +
+    "\"role\": \"user\"," +
+    "\"content\": \"" + cleanPrompt + "\"" +
+    "}]" +
+    "}";
             HttpClient client = HttpClient.newHttpClient();
 
             HttpRequest request = HttpRequest.newBuilder()

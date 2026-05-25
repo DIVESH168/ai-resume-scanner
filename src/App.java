@@ -1,60 +1,69 @@
 public class App {
     public static void main(String[] args) throws Exception {
 
-        System.out.println("=== Resume Screener Starting ===");
+        System.out.println("=== AI Resume Screener ===");
 
-        // Job and candidate details
         int candidateId = 1;
         int jobId = 1;
 
+        // Job Description
         String jobDescription =
-            "We need a Java Developer who knows " +
-            "Java, MySQL, REST APIs, Git, Spring Boot.";
+            "We need a Java Developer Intern who knows " +
+            "Core Java, OOP, DSA, MySQL, JDBC, SQL, " +
+            "Spring Boot, REST APIs, Git, GitHub, " +
+            "Problem Solving and Data Structures.";
 
-        String resumeText =
-            "I am Divesh, a Java developer. " +
-            "I know Java, MySQL, Data Structures, " +
-            "Arrays, HashMap, Sorting Algorithms. " +
-            "I have built 2 projects using Java.";
+        // ← Your PDF resume path on Desktop
+        String resumePath = "C:\\Users\\acer\\Divesh_P_Resume.pdf";
+;
 
-        // Step 1 - Call AI
-        System.out.println("Sending resume to AI...");
+        // Read PDF
+        System.out.println("Reading your PDF resume...");
+        String resumeText = PDFReader.readPDF(resumePath);
+
+        if (resumeText == null) {
+            System.out.println("❌ Could not read resume!");
+            return;
+        }
+
+        // Send to AI
+        System.out.println("\nSending to Groq AI for screening...");
         String aiResponse = AIScreener.screenResume(jobDescription, resumeText);
 
-        // Step 2 - Extract AI content text
+        // Extract result
         String aiContent = extractContent(aiResponse);
-        System.out.println("\n=== AI Result ===");
+        System.out.println("\n=== AI Analysis ===");
         System.out.println(aiContent);
 
-        // Step 3 - Extract fields
+        // Parse fields
         int score = ResultExtractor.extractScore(aiContent);
         String matched = ResultExtractor.extractMatchedSkills(aiContent);
         String missing = ResultExtractor.extractMissingSkills(aiContent);
         String recommendation = ResultExtractor.extractRecommendation(aiContent);
 
-        // Step 4 - Save to database
-        System.out.println("\n=== Saving to Database ===");
+        // Save to DB
         ResultSaver.saveResult(candidateId, jobId,
                                score, matched, missing, recommendation);
 
-        // Step 5 - Print final report
-        System.out.println("\n=== Final Screening Report ===");
-        System.out.println("Candidate ID : " + candidateId);
-        System.out.println("Job ID       : " + jobId);
-        System.out.println("Score        : " + score + "/100");
-        System.out.println("Matched      : " + matched);
-        System.out.println("Missing      : " + missing);
-        System.out.println("Verdict      : " + recommendation);
-        System.out.println("==============================");
+        // Final Report
+        System.out.println("\n╔══════════════════════════════╗");
+        System.out.println("║   YOUR SCREENING REPORT      ║");
+        System.out.println("╠══════════════════════════════╣");
+        System.out.println("║ Candidate : Divesh P         ║");
+        System.out.println("║ Job       : Java Dev Intern  ║");
+        System.out.println("╠══════════════════════════════╣");
+        System.out.println("  Score     : " + score + "/100");
+        System.out.println("  Matched   : " + matched);
+        System.out.println("  Missing   : " + missing);
+        System.out.println("  Verdict   : " + recommendation);
+        System.out.println("╚══════════════════════════════╝");
     }
 
-    // Extract text content from Groq JSON response
     private static String extractContent(String jsonResponse) {
         try {
             int start = jsonResponse.indexOf("\"content\":\"") + 11;
             int end = jsonResponse.indexOf("\"}", start);
             String content = jsonResponse.substring(start, end);
-            // Convert \n to real newlines
             content = content.replace("\\n", "\n");
             return content;
         } catch (Exception e) {
