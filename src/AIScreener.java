@@ -13,14 +13,18 @@ public class AIScreener {
 
         try {
             String prompt =
-                "You are a resume screening assistant. " +
-                "Job Description: " + jobDescription +
-                " Candidate Resume: " + resumeText +
-                " Respond in this format: " +
-                "SCORE: (number out of 100) " +
-                "MATCHED SKILLS: (comma separated) " +
-                "MISSING SKILLS: (comma separated) " +
-                "RECOMMENDATION: (one line summary)";
+    "You are a resume screening assistant. " +
+    "Candidate Resume: " + resumeText +
+    " Instructions: " +
+    " 1. First detect the job role from the resume. " +
+    " 2. Score the candidate out of 100 based on their OWN target role. " +
+    " 3. Match their skills to their target role requirements. " +
+    " Respond in this exact format: " +
+    "DETECTED ROLE: (role found in resume) " +
+    "SCORE: (number out of 100) " +
+    "MATCHED SKILLS: (comma separated) " +
+    "MISSING SKILLS: (comma separated) " +
+    "RECOMMENDATION: (one line summary)";
 
             String cleanPrompt = prompt
     .replace("\r", " ")

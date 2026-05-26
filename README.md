@@ -1,4 +1,4 @@
-# 🤖 AI-Powered Resume Screener
+# 🤖 AI-Powered Resume Scanner
 
 A Java application that uses AI to automatically screen resumes 
 against job descriptions and generate match scores.

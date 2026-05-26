@@ -43,4 +43,8 @@ public class ResultExtractor {
         }
         return "Not found";
     }
+        public static String extractDetectedRole(String aiContent) {
+        return extractField(aiContent, "DETECTED ROLE:");
+    }
+
 }

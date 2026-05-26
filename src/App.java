@@ -1,41 +1,44 @@
+import java.util.Scanner;
+
 public class App {
     public static void main(String[] args) throws Exception {
 
-        System.out.println("=== AI Resume Screener ===");
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║     AI Resume Screener v3.0      ║");
+        System.out.println("╚══════════════════════════════════╝");
+
+        Scanner scanner = new Scanner(System.in);
+
+        // Get candidate name
+        System.out.print("\nEnter candidate name: ");
+        String candidateName = scanner.nextLine();
+
+        // Get resume path
+        System.out.print("Enter resume PDF path: ");
+        String resumePath = scanner.nextLine();
 
         int candidateId = 1;
         int jobId = 1;
 
-        // Job Description
-        String jobDescription =
-            "We need a Java Developer Intern who knows " +
-            "Core Java, OOP, DSA, MySQL, JDBC, SQL, " +
-            "Spring Boot, REST APIs, Git, GitHub, " +
-            "Problem Solving and Data Structures.";
-
-        // ← Your PDF resume path on Desktop
-        String resumePath = "C:\\Users\\acer\\Divesh_P_Resume.pdf";
-;
-
         // Read PDF
-        System.out.println("Reading your PDF resume...");
+        System.out.println("\nReading PDF resume...");
         String resumeText = PDFReader.readPDF(resumePath);
 
         if (resumeText == null) {
             System.out.println("❌ Could not read resume!");
+            scanner.close();
             return;
         }
 
-        // Send to AI
-        System.out.println("\nSending to Groq AI for screening...");
-        String aiResponse = AIScreener.screenResume(jobDescription, resumeText);
+        // Send to AI (no job description needed!)
+        System.out.println("AI is detecting role and scoring...");
+        String aiResponse = AIScreener.screenResume("", resumeText);
 
         // Extract result
         String aiContent = extractContent(aiResponse);
-        System.out.println("\n=== AI Analysis ===");
-        System.out.println(aiContent);
 
         // Parse fields
+        String detectedRole = ResultExtractor.extractDetectedRole(aiContent);
         int score = ResultExtractor.extractScore(aiContent);
         String matched = ResultExtractor.extractMatchedSkills(aiContent);
         String missing = ResultExtractor.extractMissingSkills(aiContent);
@@ -46,17 +49,19 @@ public class App {
                                score, matched, missing, recommendation);
 
         // Final Report
-        System.out.println("\n╔══════════════════════════════╗");
-        System.out.println("║   YOUR SCREENING REPORT      ║");
-        System.out.println("╠══════════════════════════════╣");
-        System.out.println("║ Candidate : Divesh P         ║");
-        System.out.println("║ Job       : Java Dev Intern  ║");
-        System.out.println("╠══════════════════════════════╣");
-        System.out.println("  Score     : " + score + "/100");
-        System.out.println("  Matched   : " + matched);
-        System.out.println("  Missing   : " + missing);
-        System.out.println("  Verdict   : " + recommendation);
-        System.out.println("╚══════════════════════════════╝");
+        System.out.println("\n╔══════════════════════════════════╗");
+        System.out.println("║        SCREENING REPORT          ║");
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("  Candidate     : " + candidateName);
+        System.out.println("  Detected Role : " + detectedRole);
+        System.out.println("╠══════════════════════════════════╣");
+        System.out.println("  Score         : " + score + "/100");
+        System.out.println("  Matched       : " + matched);
+        System.out.println("  Missing       : " + missing);
+        System.out.println("  Verdict       : " + recommendation);
+        System.out.println("╚══════════════════════════════════╝");
+
+        scanner.close();
     }
 
     private static String extractContent(String jsonResponse) {
